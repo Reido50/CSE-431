@@ -1,24 +1,27 @@
+import email
 from heapq import heappop, heappush, heapify
 
 num_commands = int(input())
 
 # Deal with commands
-heap = []
-heapify(heap)
 stack = []
+max_stack = []
 for i in range(num_commands):
-    command = input().split()
+    line = input().split()
+    command = int(line[0])
 
-    if int(command[0]) == 1:
+    if command == 1:
         # Add an Email
-        heappush(heap, (int(command[1]) * -1))
-        heapify(heap)
-        stack.append(int(command[1]))
-    elif int(command[0]) == 2:
+        email_prio = int(line[1])
+        stack.append(email_prio)
+        if len(stack) == 1 or email_prio > max_stack[-1]:
+            max_stack.append(email_prio)
+        else:
+            max_stack.append(max_stack[-1])
+    elif command == 2:
         # Pop an Email
-        popped = stack.pop()
-        heap.remove(popped * -1)
-        heapify(heap)
-    elif int(command[0]) == 3:
+        stack.pop()
+        max_stack.pop()
+    elif command == 3:
         # Print most important email
-        print(heap[0] * -1)
+        print(max_stack[-1])
