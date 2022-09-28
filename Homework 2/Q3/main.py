@@ -1,4 +1,3 @@
-import email
 from heapq import heappop, heappush, heapify
 
 num_commands = int(input())
