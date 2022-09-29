@@ -1,5 +1,4 @@
 from queue import PriorityQueue
-from tracemalloc import start
 
 num_jobs = int(input())
 
@@ -13,33 +12,46 @@ for i in range(num_jobs):
 
     jobs.put((start_time, duration))
 
-# Go through jobs
-current_job = jobs.get()
-next_job = jobs.get()
-current_job_start = current_job[0]
-current_job_time = current_job[1]
-next_job_start = next_job[0]
-next_job_time = next_job[1]
-time = current_job[0]
+# Grab first job and peek next_job
+peek_job = jobs.get()
+peek_job_start = peek_job[0]
+peek_job_dur = peek_job[1]
 
-job_queue = PriorityQueue()
+current_job = None
+current_job_dur = 0
+current_job_start = 0
+
+time = peek_job_start
+
+job_dur_queue = PriorityQueue()
 jobs_done = 0
 total_job_time = 0
 while jobs_done < num_jobs:
-    # Get all other jobs at this time
-    while (time == next_job_start):
-        job_queue.put(next_job_time)
-        next_job = jobs.get()
-        next_job_start = next_job[0]
-        next_job_time = next_job[1]
+    # Get all jobs at this time
+    while (peek_job_start <= time and peek_job is not None):
+        job_dur_queue.put((peek_job_dur, peek_job_start))
+        if (not jobs.empty()):
+            peek_job = jobs.get()
+            peek_job_start = peek_job[0]
+            peek_job_dur = peek_job[1]
+        else:
+            peek_job = None
 
-    while (time < next_job_start):
-        # Finish current job
+    # Grab current job
+    if (not job_dur_queue.empty()):
+        current_job = job_dur_queue.get()
+        current_job_dur = current_job[0]
+        current_job_start = current_job[1]
+    else:
+        current_job = None
+
+    # Do current job
+    if (current_job is not None):
         jobs_done += 1
-        time += current_job_time
-        total_job_time += current_job_time
-
-        # Grab new job
-        current_job_time = job_queue.get()
+        time += current_job_dur
+        total_job_time += (time - current_job_start)
+        current_job = None
+    else:
+        time = peek_job_start
 
 print(total_job_time // num_jobs)
