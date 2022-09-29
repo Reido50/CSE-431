@@ -372,13 +372,13 @@ for op in range(num_ops):
         # Insert num into the tree
         if num >= median:
             greater.insert(num)
-            if (greater.size - lesser.size) > 1:
+            if greater.size - lesser.size > 1:
                 mini_item = greater.minimum().item
                 greater.delete(mini_item)
                 lesser.insert(mini_item)
         elif num < median:
             lesser.insert(num)
-            if (lesser.size > greater.size) > 1:
+            if lesser.size - greater.size > 1:
                 maxi_item = lesser.maximum().item
                 lesser.delete(maxi_item)
                 greater.insert(maxi_item)
@@ -391,7 +391,7 @@ for op in range(num_ops):
         elif greater.size > lesser.size:
             median = mini.item
         else:
-            median = float(greater.minimum().item + lesser.maximum().item) / 2.0
+            median = float(mini.item + maxi.item) / 2.0
 
         # Return Median
         print(('%f' % median).rstrip('0').rstrip('.'))
@@ -407,6 +407,17 @@ for op in range(num_ops):
             if result == -1:
                 result = lesser.delete(num)
 
+        # Rebalance trees
+        if result != -1:
+            if greater.size - lesser.size > 1:
+                mini_item = greater.minimum().item
+                greater.delete(mini_item)
+                lesser.insert(mini_item)
+            elif lesser.size - greater.size > 1:
+                maxi_item = lesser.maximum().item
+                lesser.delete(maxi_item)
+                greater.insert(maxi_item)
+
         # Recalc the median
         mini = greater.minimum()
         maxi = lesser.maximum()
@@ -415,7 +426,7 @@ for op in range(num_ops):
         elif greater.size > lesser.size:
             median = mini.item
         else:
-            median = float(greater.minimum().item + lesser.maximum().item) / 2.0
+            median = float(mini.item + maxi.item) / 2.0
 
         if result == -1 or (lesser.size == 0 and greater.size == 0):
             # num not found
