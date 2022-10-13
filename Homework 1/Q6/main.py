@@ -1,4 +1,3 @@
-from audioop import mul
 from math import ceil, floor, sqrt
 
 num_tests = int(input())
