@@ -396,7 +396,7 @@ while(True):
     hash_results[arr_length] = timeit.timeit(setup=curr_setup, stmt=dict_code, number=5)
     tree_results[arr_length] = timeit.timeit(setup=curr_setup, stmt=rb_tree_code, number=5)
 
-    if arr_length < 10000:
+    if arr_length < 1000000:
         arr_length *= 10
     else:
         break
@@ -409,16 +409,16 @@ for length in hash_results.keys():
 
 # creating the bar plot
 fig = plt.subplots(figsize = (12, 8))
-barWidth = 0.25
+barWidth = 0.3
 arr_lens = list(hash_results.keys())
-arr_lens_hash = [x - barWidth/2 for x in arr_lens]
+arr_lens_hash = [x - barWidth/2 for x in range(len(arr_lens))]
 times_hash = list(hash_results.values())
-arr_lens_tree = [x + barWidth/2 for x in arr_lens]
+arr_lens_tree = [x + barWidth/2 for x in range(len(arr_lens))]
 times_tree = list(tree_results.values())
 
-plt.bar(range(len(arr_lens_hash)), times_hash, color ='red',
+plt.bar(arr_lens_hash, times_hash, color ='red',
         width = barWidth, edgecolor = "grey", label = "Hash Table")
-plt.bar(range(len(arr_lens_tree)), times_tree, color ='blue',
+plt.bar(arr_lens_tree, times_tree, color ='blue',
         width = barWidth, edgecolor = "grey", label = "Red Black Tree")
  
 plt.xlabel("Number of Insertions")
@@ -426,4 +426,21 @@ plt.ylabel("Total Insertion Time")
 plt.xticks(range(len(arr_lens_tree)), arr_lens)
 plt.title("Dictionary Base: Hash Table vs Red Black Tree")
 plt.legend()
+plt.show()
+
+# creating the bar plot
+fig = plt.subplots(figsize = (12, 8))
+barWidth = 0.3
+arr_lens = list(hash_results.keys())
+ratio = []
+for i in arr_lens:
+    ratio.append(tree_results[i] / hash_results[i])
+
+plt.bar(range(len(arr_lens)), ratio, color ='green',
+        width = barWidth, edgecolor = "grey")
+ 
+plt.xlabel("Number of Insertions")
+plt.ylabel("Ratio of Insertion Time")
+plt.xticks(range(len(arr_lens_tree)), arr_lens)
+plt.title("Dictionary Base: Hash Table vs Red Black Tree")
 plt.show()
