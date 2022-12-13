@@ -7,6 +7,7 @@ edges = int(first_line[1])
 
 # Init graph
 graph = {}
+pairs = []
 for i in range(nodes):
     graph[i] = []
 
@@ -17,18 +18,21 @@ for i in range(edges):
     second = int(connection[1])
     graph[first].append(second)
     graph[second].append(first)
+    pairs.append([first, second])
 
 # Find best node
-best = -1
 most_combs = -1
-for i in range(nodes):
-    conns = graph[i]
-    num_conns = len(conns)
+for i in range(len(pairs)):
+    pair = pairs[i]
+    first = pair[0]
+    second = pair[1]
+    nodes = graph[first] + graph[second]
+    node_set = set(nodes)
+    num_conns = len(node_set)
     if num_conns > 1:
-        combinations = int(math.factorial(num_conns + 1) / (2 * math.factorial(num_conns + 1 - 2)))
+        combinations = int(math.factorial(num_conns) / (2 * math.factorial(num_conns - 2)))
 
-        if best == -1 or combinations > most_combs:
-            best = i
+        if combinations > most_combs:
             most_combs = combinations
 
 # Print result
